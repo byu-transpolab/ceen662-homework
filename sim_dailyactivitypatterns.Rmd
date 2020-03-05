@@ -36,7 +36,30 @@ There are a few additional inputs you will need to create the plans.
   - A distribution of points in Payson
   - A distribution of daily activity patterns by worker status
   
+### Population Records
+According the Google, the 2017 population of Payson was 19,892. Go ahead and 
+use this for your 2019 target. The Kem C. Gardner Policy Institute 
+[forecasts](https://gardner.utah.edu/wp-content/uploads/Projections-Brief-Final.pdf)
+that Utah County will grow from 585,694 in 2015 to 1,396,997 by 2050, or 
+`r round((1396997 - 585694)/585694 * 100, 2)`. If we apply the same growth rate
+to Payson (doubtful, but easy), this would mean `r round((19892 * (1396997 - 585694)/585694) + 19892)`
+will live in Payson in 2050.
 
+> Can you think of a better way to get future population in the region under
+study?
+
+```{r youngold}
+young <- c(9.9, 9.7, 9.2, 9.3) # shares of age groups less than 20
+old <- c(4.2, 2.3, 0.7) # shares of age groups greater than 65
+```
+
+The labor force 
+participation rate for all adults between 20 and 64 in the Provo-Orem metropolitan 
+area is 76.8% [ACS](https://factfinder.census.gov/bkmk/table/1.0/en/ACS/17_5YR/S2301/312M300US393404962470).
+The share of the population that is this age is `r 100 - sum(old, young)`%,
+so the share of the total population that works is `r (1 - sum(old, young)*.01) * .768`
+  
+  
 ### Point Distribution in Payson
 Using OpenStreetMap, we can determine that Payson can be generally described
 with the following bounding box:
@@ -97,6 +120,12 @@ leaflet(payson_houses) %>%
   addProviderTiles(providers$Esri.WorldGrayCanvas) %>%
   addCircleMarkers(radius = 1)
 ```
+
+
+### Daily Activity Pattern Distribution
+
+
+
 
 
 
