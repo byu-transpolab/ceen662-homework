@@ -6,3 +6,5 @@ navbar:
   left:
     - text: "Home"
       href: index.html
+    - text: "DAP Lab"
+      href: sim_dailyactivitypatterns.html

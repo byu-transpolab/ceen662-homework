@@ -1,0 +1,103 @@
+---
+title: "Daily Activity Pattern Simulation"
+author: "Greg Macfarlane"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(leaflet)
+library(sf)
+```
+
+## Lab Task
+Construct basic weekday daily activity patterns for Payson's current (2019) population. Your population should have three segments:
+
+  - workers: these people should have one work activity and up to one other activity
+  - non-workers: these people should have between zero and two other activities
+  
+Use MATSim's population and plans libraries to build these plans. You may
+determine how to locate the households and their activities, but please document
+how you did this in your memorandum. Run the scenario until you reach a
+satisfactory level of convergence, and analyze the volumes at the I-15
+interchange you are using for your Vissim analysis.
+
+
+## Helps
+
+In class we built a Java class file that will help you construct and write these
+plans to an `xml.gz` file. You can find an example of this class file 
+[here](materials/PlansMaker.java).
+
+There are a few additional inputs you will need to create the plans. 
+
+  - Population records (and forecasts for 2050 for the future volumes)
+  - A distribution of points in Payson
+  - A distribution of daily activity patterns by worker status
+  
+
+### Point Distribution in Payson
+Using OpenStreetMap, we can determine that Payson can be generally described
+with the following bounding box:
+
+```
+LATITUDE  > 40.0135   & LATITUDE  < 40.0680
+LONGITUDE > -111.7771 & LONGITUDE < -111.7046
+```
+
+Let's get the population-weighted centroids for block groups in Utah that
+fall inside this bounding box.
+
+```{r payson_bg}
+## pop-weighted block group centroids from Census bureau
+url <- "https://www2.census.gov/geo/docs/reference/cenpop2010/blkgrp/CenPop2010_Mean_BG49.txt"
+payson_bg <- read_csv(url) %>%
+  filter(LATITUDE  > 40.0135, LATITUDE  < 40.0680) %>%
+  filter(LONGITUDE > -111.7771, LONGITUDE < -111.7046)
+```
+
+
+```{r payson_bg_map, echo = FALSE}
+leaflet(payson_bg %>%  sf::st_as_sf(coords = c("LONGITUDE", "LATITUDE"), crs = 4326) ) %>%
+  addProviderTiles(providers$Esri.WorldGrayCanvas) %>%
+  addCircleMarkers(radius = 1)
+```
+
+Then, let's calculate the mean and standard deviation of these points
+in the $x$ and $y$ direction. The map following shows 1000 random points
+with this mean and standard deviation. This method seems to work pretty
+well, though it's not perfect given that Payson is largely on one side of the
+freeway. But it'll work for this lab. You might also choose to use a uniform
+distribution instead.
+
+```{r payson_distribution}
+(payson_distribution <- payson_bg %>%
+  summarise(
+    lat = weighted.mean(LATITUDE, w = POPULATION),
+    lon = weighted.mean(LONGITUDE, w = POPULATION),
+    lat_sd = sqrt(Hmisc::wtd.var(LATITUDE, POPULATION)),
+    lon_sd = sqrt(Hmisc::wtd.var(LONGITUDE, POPULATION)),
+  ))
+```
+
+```{r payson_houses}
+n_people <- 1000
+lat <- rnorm(n_people, mean = payson_distribution$lat, sd = payson_distribution$lat_sd)
+lon <- rnorm(n_people, mean = payson_distribution$lon, sd = payson_distribution$lon_sd)
+
+payson_houses <- tibble(id = 1:n_people) %>%
+  mutate(
+    lat = lat, lon = lon
+  ) %>%
+  sf::st_as_sf(coords = c("lon", "lat"), crs = 4326)
+
+
+leaflet(payson_houses) %>%
+  addProviderTiles(providers$Esri.WorldGrayCanvas) %>%
+  addCircleMarkers(radius = 1)
+```
+
+
+
+
