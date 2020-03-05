@@ -18,8 +18,16 @@ library(sf)
 ## Lab Task
 Construct basic weekday daily activity patterns for Payson's current (2019) population. Your population should have three segments:
 
-  - workers: these people should have one work activity and up to one other activity
-  - non-workers: these people should have between zero and two other activities
+  - workers
+  - non-workers
+  
+Both population groups should choose between the following daily activity patterns:
+
+  - *Mandatory* patterns include one `work` activity and up to one additional
+  after-work activity. The work activity should "occur" on I-15 leaving the region.
+  - *Non-mandatory* patterns include between one and three `other` activitities.
+  The other activities should occur in Payson or on I-15 leaving the region.
+  - *Home* patterns include no activities outside the home.
   
 Use MATSim's population and plans libraries to build these plans. You may
 determine how to locate the households and their activities, but please document
