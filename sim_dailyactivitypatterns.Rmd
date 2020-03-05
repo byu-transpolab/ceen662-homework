@@ -99,13 +99,14 @@ freeway. But it'll work for this lab. You might also choose to use a uniform
 distribution instead.
 
 ```{r payson_distribution}
-(payson_distribution <- payson_bg %>%
+payson_distribution <- payson_bg %>%
   summarise(
     lat = weighted.mean(LATITUDE, w = POPULATION),
     lon = weighted.mean(LONGITUDE, w = POPULATION),
     lat_sd = sqrt(Hmisc::wtd.var(LATITUDE, POPULATION)),
     lon_sd = sqrt(Hmisc::wtd.var(LONGITUDE, POPULATION)),
-  ))
+  )
+knitr::kable(payson_distribution, digits = 7)
 ```
 
 ```{r payson_houses}
