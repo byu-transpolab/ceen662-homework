@@ -124,9 +124,30 @@ leaflet(payson_houses) %>%
 
 ### Daily Activity Pattern Distribution
 
+We processed the 2017 National Household Travel Survey for metropolitan areas
+between 1 and 3 Million people to determine the daily activity patterns for
+the following two person types:
+
+  - `workers`: People with a full or part-time job
+  - `non-workers`: everyone else
+  
+It might be debatable whether Payson behaves more like the metropolitan region
+it is a part of, or if it behaves like a small and isolated city. But dismissing
+this quibble for the moment, the DAP distribution for these two person groups is 
+given in the table below.
+
+|Person Type |   Home   | Mandatory|Non-Mandatory|
+|:-----------|---------:|---------:|---------:|
+|non-worker  | 0.2294942| 0.1654482| 0.6050576|
+|worker      | 0.0829301| 0.6316277| 0.2854422|
 
 
+The definition of these patterns in the context of our simulation is as follows:
 
+  - *Mandatory* patterns include one `work` activity and up to one additional
+  after-work activity
+  - *Non-mandatory* patterns include between one and three `other` activitities
+  - *Home* patterns include no activities outside the home.
 
 
 
